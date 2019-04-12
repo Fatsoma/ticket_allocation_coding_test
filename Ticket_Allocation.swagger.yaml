@@ -1,0 +1,130 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: Ticket Allocation
+  description: 'Ticket Allocation Coding Test'
+  contact: {}
+host: 'localhost:3000'
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  '/ticket_options/{ticketOptionID}':
+    get:
+      description: Get Ticket Option
+      summary: Get ticket option
+      tags:
+        - Misc
+      operationId: TicketOptionsByTicketOptionIDGet
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: ticketOptionID
+          in: path
+          required: true
+          type: string
+          description: ''
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /ticket_options:
+    post:
+      description: Create Ticket Option
+      summary: Create ticket option
+      tags:
+        - Misc
+      operationId: TicketOptionsPost
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: ''
+        - name: Body
+          in: body
+          required: true
+          description: ''
+          schema:
+            $ref: '#/definitions/CreateticketoptionRequest'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  '/ticket_options/{ticketOptionID}/purchases':
+    post:
+      description: Create Purchase
+      summary: Create Purchase
+      tags:
+        - Misc
+      operationId: TicketOptionsPurchasesByTicketOptionIDPost
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: ''
+        - name: Body
+          in: body
+          required: true
+          description: ''
+          schema:
+            $ref: '#/definitions/CreatePurchaseRequest'
+        - name: ticketOptionID
+          in: path
+          required: true
+          type: string
+          description: ''
+      responses:
+        '200':
+          description: ''
+          headers: {}
+definitions:
+  CreateticketoptionRequest:
+    title: CreateticketoptionRequest
+    example:
+      name: Test ticket option
+      desc: ticket opion description
+      allocation: 100
+    type: object
+    properties:
+      name:
+        type: string
+      desc:
+        type: string
+      allocation:
+        type: integer
+        format: int32
+    required:
+      - name
+      - desc
+      - allocation
+  CreatePurchaseRequest:
+    title: CreatePurchaseRequest
+    example:
+      quantity: 1
+      user_id: d6abe829-c28c-44ec-bee6-3183f2c53fef
+    type: object
+    properties:
+      quantity:
+        type: integer
+        format: int32
+      user_id:
+        type: string
+    required:
+      - quantity
+      - user_id
+tags:
+  - name: Misc
+    description: ''

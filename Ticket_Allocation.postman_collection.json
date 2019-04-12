@@ -1,0 +1,102 @@
+{
+	"info": {
+		"name": "Ticket Allocation",
+		"_postman_id": "c9337a0d-ac26-0331-634f-b7553c9f800c",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get ticket option",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "localhost:3000/ticket_options/{{ticketOptionID}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"ticket_options",
+						"{{ticketOptionID}}"
+					]
+				},
+				"description": "Get Ticket Option"
+			},
+			"response": []
+		},
+		{
+			"name": "Create ticket option",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var data = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"ticketOptionID\", data[\"id\"]);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test ticket option\",\n    \"desc\": \"ticket opion description\",\n    \"allocation\": 100\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/ticket_options",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"ticket_options"
+					]
+				},
+				"description": "Create Ticket Option"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Purchase",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"quantity\": 1,\n\t\"user_id\": \"d6abe829-c28c-44ec-bee6-3183f2c53fef\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/ticket_options/{{ticketOptionID}}/purchases",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"ticket_options",
+						"{{ticketOptionID}}",
+						"purchases"
+					]
+				},
+				"description": "Create Purchase"
+			},
+			"response": []
+		}
+	]
+}
