@@ -26,9 +26,9 @@ Request Body:
 
 ```json
 {
-	"name": "example",
-	"desc": "sample description",
-	"allocation": 100
+  "name": "example",
+  "desc": "sample description",
+  "allocation": 100
 }
 ```
 
@@ -36,10 +36,10 @@ Response Body:
 
 ```json
 {
-  "id": "70b751fe-04dd-4dd1-8955-ab9b188ddb1f"
-	"name": "example",
-	"desc": "sample description",
-	"allocation": 100
+  "id": "70b751fe-04dd-4dd1-8955-ab9b188ddb1f",
+  "name": "example",
+  "desc": "sample description",
+  "allocation": 100
 }
 ```
 
@@ -55,10 +55,10 @@ Response Body:
 
 ```json
 {
-  "id": "70b751fe-04dd-4dd1-8955-ab9b188ddb1f"
-	"name": "example",
-	"desc": "sample description",
-	"allocation": 100
+  "id": "70b751fe-04dd-4dd1-8955-ab9b188ddb1f",
+  "name": "example",
+  "desc": "sample description",
+  "allocation": 100
 }
 ```
 
@@ -72,8 +72,8 @@ Request body:
 
 ```json
 {
-	"quantity": 2,
-	"user_id": "406c1d05-bbb2-4e94-b183-7d208c2692e1"
+  "quantity": 2,
+  "user_id": "406c1d05-bbb2-4e94-b183-7d208c2692e1"
 }
 ```
 
