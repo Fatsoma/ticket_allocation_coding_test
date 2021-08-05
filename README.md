@@ -13,8 +13,8 @@ Your submission must be your own work.
 
 ### Languages and frameworks
 
-For reference, here at Fatsoma we primarily develop using ruby and golang.
-However feel free to solve this in whatever you feel comfortable with.
+For reference, here at Fatsoma we primarily develop using ruby on rails and
+golang. However feel free to solve this in whatever language you feel comfortable with and use a framework if desired.
 
 We are mainly looking for clean, well architected, tested code that highlights
 your skillset and shows technical proficiency.
