@@ -1,5 +1,16 @@
 # Ticket Allocation
 
+## Introduction
+
+Thanks for applying for a development role at Fatsoma. To give us a good
+indication of programming ability and style please submit your solution for
+this ticket allocation problem.
+
+It is expected that you spend no more than an hour or two on this. A partial
+solution is still very useful.
+
+Your submission must be your own work.
+
 ## Problem definition
 
 The following three routes need to be built to enable allocating of ticket
