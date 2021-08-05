@@ -21,9 +21,13 @@ your skillset and shows technical proficiency.
 
 ### Database
 
-Included is an SQL dump from PostgreSQL. It is not required to use this but should be helpful.
+Included is an SQL dump from PostgreSQL. It is not required to use this but
+should be helpful.
 
-PostgreSQL has all the functionality required for satisfying this problem set, with some modern additions (post 9.5) that may be of interest. You may choose to use a different database engine that satisfies the requirements of this problem.
+PostgreSQL has all the functionality required for satisfying this problem set,
+with some features introduced version 9.5 that may be of interest. You may
+choose to use a different database engine that satisfies the requirements of
+this problem.
 
 ---
 
