@@ -22,7 +22,7 @@ your skillset and shows technical proficiency.
 ### Database
 
 Included is an SQL dump from PostgreSQL. It is not required to use this but
-should be helpful.
+should be helpful. You may need to amend this to add constraints.
 
 PostgreSQL has all the functionality required for satisfying this problem set,
 with some features introduced version 9.5 that may be of interest. You may
