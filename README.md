@@ -6,8 +6,9 @@ Thanks for applying for a development role at Fatsoma. To give us a good
 indication of programming ability and style please submit your solution for
 this ticket allocation problem.
 
-It is expected that you spend no more than an hour or two on this. A partial
-solution is still very useful.
+This is not a timed test, but you do not need to spend more than a couple of
+hours on this. A partial solution is still very useful, and you can describe
+your thoughts for next steps that would be taken.
 
 Your submission must be your own work.
 
