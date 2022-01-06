@@ -114,3 +114,9 @@ Request body:
 A 2xx status code must be returned on success.
 
 A 4xx status code must be returned on any request that attempts to purchase more tickets than are available. In this case, no tickets should be purchased for that request.
+
+## License
+
+See LICENSE file.
+
+Please be honest and do not share your solutions to this challenge with other job applicants. You may adapt this problem for your own company's hiring process but it should be changed enough to require applicants to do their own work.
