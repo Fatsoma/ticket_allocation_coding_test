@@ -184,7 +184,7 @@ A 4xx status code must be returned on any request that attempts to purchase more
             "title": "Unable to purchase provided quantity",
             "detail": "Unable to reserve given quantity of ticket options",
             "source": {
-                "pointer": "/data/quantity"
+                "pointer": "/data/attributes/quantity"
             }
         }
     ]
