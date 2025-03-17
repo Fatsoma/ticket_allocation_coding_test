@@ -18,7 +18,7 @@ For reference, here at Fatsoma we primarily develop using ruby on rails and
 golang. However feel free to solve this in whatever language you feel comfortable with and use a framework if desired.
 
 We are mainly looking for clean, well architected, tested code that highlights
-your skillset and shows technical proficiency.
+your skill set and shows technical proficiency.
 
 ### Database
 
@@ -35,7 +35,7 @@ this problem.
 ## Problem definition
 
 The following three routes need to be built to enable allocating of ticket
-options to multiple purchases.
+options to multiple purchases. They all correspond to the jsonapi spec (https://jsonapi.org/)
 
 The solution needs to ensure that the allocation does not drop below 0,
 and the purchased amounts are not greater than the allocation given.
@@ -58,9 +58,14 @@ Request Body:
 
 ```json
 {
-  "name": "example",
-  "desc": "sample description",
-  "allocation": 100
+    "data": {
+        "type": "ticket_options",
+        "attributes": {
+            "name": "example",
+            "description": "sample description",
+            "allocation": 100
+        }
+    }
 }
 ```
 
@@ -68,10 +73,15 @@ Response Body:
 
 ```json
 {
-  "id": "70b751fe-04dd-4dd1-8955-ab9b188ddb1f",
-  "name": "example",
-  "desc": "sample description",
-  "allocation": 100
+    "data": {
+        "type": "ticket_options",
+        "id": "70b751fe-04dd-4dd1-8955-ab9b188ddb1f",
+        "attributes": {
+            "name": "example",
+            "description": "sample description",
+            "allocation": 100
+        }
+    }
 }
 ```
 
@@ -87,10 +97,15 @@ Response Body:
 
 ```json
 {
-  "id": "70b751fe-04dd-4dd1-8955-ab9b188ddb1f",
-  "name": "example",
-  "desc": "sample description",
-  "allocation": 100
+    "data": {
+        "type": "ticket_options",
+        "id": "70b751fe-04dd-4dd1-8955-ab9b188ddb1f",
+        "attributes": {
+            "name": "example",
+            "description": "sample description",
+            "allocation": 100
+        }
+    }
 }
 ```
 
@@ -98,19 +113,80 @@ Response Body:
 
 Purchase a quantity of tickets from the allocation of the given ticket_option:
 
-`POST /ticket_options/:id/purchases`
+`POST /purchases`
 
 Request body:
 
 ```json
 {
-  "quantity": 2,
-  "user_id": "406c1d05-bbb2-4e94-b183-7d208c2692e1"
+    "data": {
+        "type": "purchases",
+        "attributes": {
+            "quantity": 2
+        },
+        "relationships": {
+            "ticket_option": {
+                "data": {
+                    "type": "ticket_options",
+                    "id": "969f4317-09f4-4b15-b8be-a87d40fb56fb"
+                }
+            },
+            "user": {
+                "data": {
+                    "type": "users",
+                    "id": "d6abe829-c28c-44ec-bee6-3183f2c53fef"
+                }
+            }
+        }
+    }
 }
+
 ```
 
-(No Response body)
+Response Body:
 
 A 2xx status code must be returned on success.
 
-A 4xx status code must be returned on any request that attempts to purchase more tickets than are available. In this case, no tickets should be purchased for that request.
+```json
+{
+    "data": {
+        "type": "purchases",
+        "id": "cd837712-fd86-4345-9e7f-d519c8db6c45",
+        "attributes": {
+            "quantity": 2
+        },
+        "relationships": {
+            "ticket_option": {
+                "data": {
+                    "type": "ticket_options",
+                    "id": "969f4317-09f4-4b15-b8be-a87d40fb56fb"
+                }
+            },
+            "user": {
+                "data": {
+                    "type": "users",
+                    "id": "d6abe829-c28c-44ec-bee6-3183f2c53fef"
+                }
+            }
+        }
+    }
+}
+```
+
+A 4xx status code must be returned on any request that attempts to purchase more tickets than are available. In this case, no tickets should be purchased for that request. Example error response given below
+
+```json
+{
+    "errors": [
+        {
+            "status": "400",
+            "code": "invalid_purchase_quantity",
+            "title": "Unable to purchase provided quantity",
+            "detail": "Unable to reserve given quantity of ticket options",
+            "source": {
+                "pointer": "/data/quantity"
+            }
+        }
+    ]
+}
+```
