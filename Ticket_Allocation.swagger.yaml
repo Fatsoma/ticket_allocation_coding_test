@@ -1,130 +1,135 @@
-swagger: '2.0'
+openapi: 3.0.3
 info:
-  version: '1.0'
   title: Ticket Allocation
-  description: 'Ticket Allocation Coding Test'
+  version: 1.0.0
   contact: {}
-host: 'localhost:3000'
-basePath: /
-schemes:
-  - http
-consumes:
-  - application/json
-produces:
-  - application/json
+servers:
+  - url: localhost
 paths:
-  '/ticket_options/{ticketOptionID}':
+  /ticket_options/{ticketOptionID}:
     get:
-      description: Get Ticket Option
       summary: Get ticket option
-      tags:
-        - Misc
-      operationId: TicketOptionsByTicketOptionIDGet
-      deprecated: false
-      produces:
-        - application/json
-      parameters:
-        - name: ticketOptionID
-          in: path
-          required: true
-          type: string
-          description: ''
+      description: Get Ticket Option by provided Ticket Option ID
+      operationId: getTicketOption
       responses:
         '200':
           description: ''
-          headers: {}
+    parameters:
+      - name: ticketOptionID
+        in: path
+        required: true
+        schema:
+          type: string
   /ticket_options:
     post:
-      description: Create Ticket Option
       summary: Create ticket option
-      tags:
-        - Misc
-      operationId: TicketOptionsPost
-      deprecated: false
-      produces:
-        - application/json
-      parameters:
-        - name: Content-Type
-          in: header
-          required: true
-          type: string
-          description: ''
-        - name: Body
-          in: body
-          required: true
-          description: ''
-          schema:
-            $ref: '#/definitions/CreateticketoptionRequest'
+      description: Create Ticket Option with given attributes
+      operationId: createTicketOption
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    attributes:
+                      type: object
+                      properties:
+                        allocation:
+                          type: number
+                          example: 100
+                        description:
+                          type: string
+                          example: ticket option description
+                        name:
+                          type: string
+                          example: Test ticket option
+                    type:
+                      type: string
+                      example: ticket_options
+            examples:
+              Create ticket option:
+                value:
+                  data:
+                    attributes:
+                      allocation: 100
+                      description: ticket opion description
+                      name: Test ticket option
+                    type: ticket_options
       responses:
         '200':
           description: ''
-          headers: {}
-  '/ticket_options/{ticketOptionID}/purchases':
+  /purchases:
     post:
-      description: Create Purchase
       summary: Create Purchase
-      tags:
-        - Misc
-      operationId: TicketOptionsPurchasesByTicketOptionIDPost
-      deprecated: false
-      produces:
-        - application/json
-      parameters:
-        - name: Content-Type
-          in: header
-          required: true
-          type: string
-          description: ''
-        - name: Body
-          in: body
-          required: true
-          description: ''
-          schema:
-            $ref: '#/definitions/CreatePurchaseRequest'
-        - name: ticketOptionID
-          in: path
-          required: true
-          type: string
-          description: ''
+      description: >-
+        Create Purchase with quantity and associated User / Ticket Option
+        relationship
+      operationId: createPurchase
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    attributes:
+                      type: object
+                      properties:
+                        quantity:
+                          type: number
+                          example: 1
+                    relationships:
+                      type: object
+                      properties:
+                        ticket_option:
+                          type: object
+                          properties:
+                            data:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  example: '{{ticketOptionID}}'
+                                type:
+                                  type: string
+                                  example: ticket_options
+                        user:
+                          type: object
+                          properties:
+                            data:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  example: d6abe829-c28c-44ec-bee6-3183f2c53fef
+                                type:
+                                  type: string
+                                  example: users
+                    type:
+                      type: string
+                      example: purchases
+            examples:
+              Create Purchase:
+                value:
+                  data:
+                    attributes:
+                      quantity: 1
+                    relationships:
+                      ticket_option:
+                        data:
+                          id: '{{ticketOptionID}}'
+                          type: ticket_options
+                      user:
+                        data:
+                          id: d6abe829-c28c-44ec-bee6-3183f2c53fef
+                          type: users
+                    type: purchases
       responses:
         '200':
           description: ''
-          headers: {}
-definitions:
-  CreateticketoptionRequest:
-    title: CreateticketoptionRequest
-    example:
-      name: Test ticket option
-      desc: ticket opion description
-      allocation: 100
-    type: object
-    properties:
-      name:
-        type: string
-      desc:
-        type: string
-      allocation:
-        type: integer
-        format: int32
-    required:
-      - name
-      - desc
-      - allocation
-  CreatePurchaseRequest:
-    title: CreatePurchaseRequest
-    example:
-      quantity: 1
-      user_id: d6abe829-c28c-44ec-bee6-3183f2c53fef
-    type: object
-    properties:
-      quantity:
-        type: integer
-        format: int32
-      user_id:
-        type: string
-    required:
-      - quantity
-      - user_id
-tags:
-  - name: Misc
-    description: ''
+tags: []

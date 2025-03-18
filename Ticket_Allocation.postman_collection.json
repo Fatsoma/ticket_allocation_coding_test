@@ -1,17 +1,22 @@
 {
 	"info": {
+		"_postman_id": "a738e5c8-0312-4ed6-bf38-0943677f59f7",
 		"name": "Ticket Allocation",
-		"_postman_id": "c9337a0d-ac26-0331-634f-b7553c9f800c",
-		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "164129"
 	},
 	"item": [
 		{
 			"name": "Get ticket option",
 			"request": {
 				"method": "GET",
-				"header": [],
-				"body": {},
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.api+json",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "localhost:3000/ticket_options/{{ticketOptionID}}",
 					"host": [
@@ -23,7 +28,7 @@
 						"{{ticketOptionID}}"
 					]
 				},
-				"description": "Get Ticket Option"
+				"description": "Get Ticket Option by provided Ticket Option ID"
 			},
 			"response": []
 		},
@@ -33,12 +38,13 @@
 				{
 					"listen": "test",
 					"script": {
-						"type": "text/javascript",
 						"exec": [
-							"var data = JSON.parse(responseBody);",
-							"postman.setEnvironmentVariable(\"ticketOptionID\", data[\"id\"]);",
+							"var data = JSON.parse(pm.response.text());",
+							"pm.environment.set(\"ticketOptionID\", data[\"data\"][\"id\"]);",
 							""
-						]
+						],
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -47,12 +53,12 @@
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json"
+						"value": "application/vnd.api+json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"Test ticket option\",\n    \"desc\": \"ticket opion description\",\n    \"allocation\": 100\n}"
+					"raw": "{\n    \"data\": {\n        \"type\": \"ticket_options\",\n        \"attributes\": {\n            \"name\": \"Test ticket option\",\n            \"description\": \"ticket option description\",\n            \"allocation\": 100\n        }\n    }\n}"
 				},
 				"url": {
 					"raw": "localhost:3000/ticket_options",
@@ -64,7 +70,7 @@
 						"ticket_options"
 					]
 				},
-				"description": "Create Ticket Option"
+				"description": "Create Ticket Option with given attributes"
 			},
 			"response": []
 		},
@@ -75,26 +81,24 @@
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json"
+						"value": "application/vnd.api+json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"quantity\": 1,\n\t\"user_id\": \"d6abe829-c28c-44ec-bee6-3183f2c53fef\"\n}"
+					"raw": "{\n    \"data\": {\n        \"type\": \"purchases\",\n        \"attributes\": {\n            \"quantity\": 1\n        },\n        \"relationships\": {\n            \"user\": {\n                \"data\": {\n                    \"type\": \"users\",\n                    \"id\": \"d6abe829-c28c-44ec-bee6-3183f2c53fef\"\n                }\n            },\n            \"ticket_option\": {\n                \"data\": {\n                    \"type\": \"ticket_options\",\n                    \"id\": \"{{ticketOptionID}}\"\n                }\n            }\n        }\n    }\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/ticket_options/{{ticketOptionID}}/purchases",
+					"raw": "localhost:3000/purchases",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"ticket_options",
-						"{{ticketOptionID}}",
 						"purchases"
 					]
 				},
-				"description": "Create Purchase"
+				"description": "Create Purchase with quantity and associated User / Ticket Option relationship"
 			},
 			"response": []
 		}

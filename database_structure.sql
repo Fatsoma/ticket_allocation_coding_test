@@ -90,7 +90,7 @@ CREATE TABLE schema_migrations (
 CREATE TABLE ticket_options (
     id uuid DEFAULT uuid_generate_v4() NOT NULL,
     name character varying,
-    "desc" character varying,
+    description character varying,
     allocation integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
