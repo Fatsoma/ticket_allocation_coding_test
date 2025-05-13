@@ -111,7 +111,7 @@ Response Body:
 
 ### Purchase from Ticket Option
 
-Purchase a quantity of tickets from the allocation of the given ticket_option:
+Purchase a quantity of tickets from the allocation of the given ticket_option and associate with a user (N.B. managing a user resource is not being looked at here, so an example id should be sufficient):
 
 `POST /purchases`
 
