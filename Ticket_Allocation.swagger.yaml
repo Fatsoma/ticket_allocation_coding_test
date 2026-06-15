@@ -29,7 +29,7 @@ paths:
       operationId: createTicketOption
       requestBody:
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               type: object
               properties:
@@ -40,7 +40,8 @@ paths:
                       type: object
                       properties:
                         allocation:
-                          type: number
+                          type: integer
+                          minimum: 0
                           example: 100
                         description:
                           type: string
@@ -74,7 +75,7 @@ paths:
       operationId: createPurchase
       requestBody:
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               type: object
               properties:
@@ -85,7 +86,8 @@ paths:
                       type: object
                       properties:
                         quantity:
-                          type: number
+                          type: integer
+                          minimum: 1
                           example: 1
                     relationships:
                       type: object
