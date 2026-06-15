@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   contact: {}
 servers:
-  - url: localhost
+  - url: http://localhost:3000
 paths:
   /ticket_options/{ticketOptionID}:
     get:
@@ -13,7 +13,9 @@ paths:
       operationId: getTicketOption
       responses:
         '200':
-          description: ''
+          description: Ticket option found
+        '404':
+          description: Ticket option not found
     parameters:
       - name: ticketOptionID
         in: path
@@ -59,8 +61,10 @@ paths:
                       name: Test ticket option
                     type: ticket_options
       responses:
-        '200':
-          description: ''
+        '201':
+          description: Ticket option created
+        '400':
+          description: Invalid request body
   /purchases:
     post:
       summary: Create Purchase
@@ -130,6 +134,12 @@ paths:
                           type: users
                     type: purchases
       responses:
-        '200':
-          description: ''
+        '201':
+          description: Purchase created
+        '400':
+          description: >-
+            Invalid purchase (e.g. quantity exceeds remaining allocation or is
+            not a positive integer); no tickets are persisted
+        '404':
+          description: Referenced ticket option not found
 tags: []
