@@ -4,13 +4,15 @@
 
 Thanks for applying for a development role at Fatsoma. To give us a good
 indication of your programming ability and style, please submit your solution
-for this ticket allocation problem.
+for this ticket allocation problem. We are mainly looking for clean, well
+architected, tested code that highlights your skill set and shows technical
+proficiency.
 
 This is not a timed test, but you do not need to spend more than a couple of
 hours on it. We have tried to keep the scope small so that time is spent on the
-interesting parts (see [What we're evaluating](#what-were-evaluating)) rather
-than on boilerplate. A partial solution is still very useful — if you run out of
-time, describe in your submission what you would do next.
+interesting parts rather than on boilerplate. A partial solution is still very
+useful — if you run out of time, describe in your submission what you would do
+next.
 
 Your submission must be your own work.
 
@@ -31,28 +33,14 @@ Go. However, feel free to solve this in whatever language you are most
 comfortable with, and use a framework if you wish. We are interested in how you
 structure and reason about the solution, not in any particular stack.
 
-## What we're evaluating
-
-This is a small problem on purpose. We are mainly looking for clean, well
-architected, tested code. Specifically we will be looking at:
-
-- **Separation of concerns** — a clear boundary between the HTTP/transport
-  layer, business logic, and persistence.
-- **Concurrency safety** — the allocation invariant must hold under concurrent
-  requests (see [Concurrency requirement](#concurrency-requirement)). This is
-  the most important part of the exercise.
-- **Testing** — automated tests covering the allocation/purchase logic,
-  including the over-allocation and concurrency edge cases.
-- **Clarity** — readable code, sensible naming, and a short README explaining
-  how to run it.
-
-You do not need to build authentication, payment handling, a UI, or anything
-beyond the three routes described below.
-
 ## Problem definition
 
 The following three routes need to be built to enable allocating ticket options
 to multiple purchases. They all correspond to the [JSON:API spec](https://jsonapi.org/).
+If helpful, a list of JSON:API implementation libraries across various languages
+is available at https://jsonapi.org/implementations/. We're not assessing strict
+conformance to the spec, so minor differences in the output produced by your
+chosen library are fine.
 
 A `ticket_option` is created with a fixed `allocation` — the total number of
 tickets available to purchase. Each `purchase` draws a `quantity` of tickets
@@ -68,21 +56,15 @@ and does not change once created; remaining availability is derived from the
 allocation minus the quantities already purchased. The `GET` route returns the
 `ticket_option` as created (i.e. the original `allocation`).
 
-We use the term "purchase", but taking payment is out of scope for this problem.
+Expect requests to be made against this API concurrently, and design it to scale
+horizontally: multiple instances of the program may run at once to handle large
+numbers of requests. The invariant above must hold regardless of how many
+requests, or how many running instances, are involved — including when many
+purchases hit the same `ticket_option` at the same time.
 
-### Concurrency requirement
-
-Expect multiple requests to be made against this API concurrently. In
-particular, we will fire many concurrent `POST /purchases` requests against a
-single `ticket_option` and assert that:
-
-- the total quantity successfully purchased never exceeds the `allocation`, and
-- requests that would breach the allocation are rejected (see error response
-  below) without persisting any tickets.
-
-Please make sure your solution handles this correctly — naive
-read-then-write logic will over-allocate under load. We encourage you to include
-a test that demonstrates the invariant holding under concurrency.
+We use the term "purchase", but taking payment is out of scope. You do not need
+to build authentication, payment handling, a UI, or anything beyond the three
+routes described below.
 
 ### Database
 
@@ -92,9 +74,10 @@ intentionally ships **without** integrity constraints (no foreign keys, nullable
 columns, no `CHECK`s) — part of the exercise is deciding what constraints the
 schema should have.
 
-PostgreSQL has all the functionality required to satisfy this problem. You may
-choose a different database engine, or an in-memory store, provided it lets you
-satisfy the concurrency requirement above and you explain the trade-off.
+The SQL dump is provided purely as an example. Whatever storage you use, it must
+let you prevent overselling a `ticket_option`'s allocation under concurrent load
+across multiple instances. Beyond that, you may use any database engine or
+storage approach you like.
 
 ## Routes with example requests
 
