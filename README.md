@@ -190,7 +190,7 @@ Request body:
 
 Response Body:
 
-A `2xx` status code must be returned on success.
+A `201 Created` status code must be returned on success.
 
 ```json
 {
