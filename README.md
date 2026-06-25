@@ -264,9 +264,11 @@ Please include a short README in your submission covering:
    given more time, and a short declaration of any AI tool usage (see
    [Use of AI tools](#use-of-ai-tools)).
 
-Submit your solution as a link to a public Git repository (e.g. GitHub) or as a
-zip/tarball, whichever is easier for you. Please do not include compiled
-artifacts or dependency directories (e.g. `node_modules`, `vendor`).
+Submit your solution as a link to a Git repository (e.g. GitHub) or as a
+zip/tarball, whichever is easier for you. If you use a private repository, please
+invite the GitHub user `fatsoma-review` so we can access it. Please do not
+include compiled artifacts or dependency directories (e.g. `node_modules`,
+`vendor`).
 
 If anything in this brief is unclear, make a reasonable assumption, state it in
 your notes, and carry on — we are happy to discuss your reasoning when we meet.
