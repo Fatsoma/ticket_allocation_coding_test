@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   contact: {}
 servers:
-  - url: localhost
+  - url: http://localhost:3000
 paths:
   /ticket_options/{ticketOptionID}:
     get:
@@ -13,7 +13,9 @@ paths:
       operationId: getTicketOption
       responses:
         '200':
-          description: ''
+          description: Ticket option found
+        '404':
+          description: Ticket option not found
     parameters:
       - name: ticketOptionID
         in: path
@@ -27,7 +29,7 @@ paths:
       operationId: createTicketOption
       requestBody:
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               type: object
               properties:
@@ -38,7 +40,8 @@ paths:
                       type: object
                       properties:
                         allocation:
-                          type: number
+                          type: integer
+                          minimum: 0
                           example: 100
                         description:
                           type: string
@@ -59,8 +62,10 @@ paths:
                       name: Test ticket option
                     type: ticket_options
       responses:
-        '200':
-          description: ''
+        '201':
+          description: Ticket option created
+        '400':
+          description: Invalid request body
   /purchases:
     post:
       summary: Create Purchase
@@ -70,7 +75,7 @@ paths:
       operationId: createPurchase
       requestBody:
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               type: object
               properties:
@@ -81,7 +86,8 @@ paths:
                       type: object
                       properties:
                         quantity:
-                          type: number
+                          type: integer
+                          minimum: 1
                           example: 1
                     relationships:
                       type: object
@@ -130,6 +136,12 @@ paths:
                           type: users
                     type: purchases
       responses:
-        '200':
-          description: ''
+        '201':
+          description: Purchase created
+        '400':
+          description: >-
+            Invalid purchase (e.g. quantity exceeds remaining allocation or is
+            not a positive integer); no tickets are persisted
+        '404':
+          description: Referenced ticket option not found
 tags: []
