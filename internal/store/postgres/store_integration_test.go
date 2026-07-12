@@ -497,31 +497,23 @@ func TestPostgresIndependentOptionsUnderContention(t *testing.T) {
 	assertPurchasedMatchesSum(t, db, optionB.ID, allocationB)
 }
 
-func TestPostgresZeroAllocation(t *testing.T) {
+func TestPostgresRejectsZeroAllocation(t *testing.T) {
 	db := openTestDB(t)
 	truncate(t, db)
 	store := postgres.NewStore(db)
-	ctx := context.Background()
 
-	option, err := store.CreateTicketOption(ctx, ticketing.CreateTicketOptionParams{
+	_, err := store.CreateTicketOption(context.Background(), ticketing.CreateTicketOptionParams{
 		Name:        "SoldOut",
 		Allocation:  0,
-		BucketCount: 0,
+		BucketCount: 1,
 	})
-	if err != nil {
-		t.Fatalf("create: %v", err)
+	var invalid *ticketing.InvalidInputError
+	if !errors.As(err, &invalid) {
+		t.Fatalf("expected InvalidInputError, got %v", err)
 	}
-
-	_, err = store.CreatePurchase(ctx, ticketing.CreatePurchaseParams{
-		Quantity:       1,
-		UserID:         uuid.New(),
-		TicketOptionID: option.ID,
-	})
-	if !errors.Is(err, ticketing.ErrInsufficientAllocation) {
-		t.Fatalf("expected insufficient allocation, got %v", err)
+	if invalid.Pointer != "/data/attributes/allocation" {
+		t.Fatalf("pointer = %q, want allocation", invalid.Pointer)
 	}
-
-	assertPurchasedMatchesSum(t, db, option.ID, 0)
 }
 
 func TestPostgresCancelUnderLoad(t *testing.T) {

@@ -58,7 +58,7 @@ type CreateTicketOptionParams struct {
 	Name        string
 	Description string
 	Allocation  int
-	BucketCount int // resolved create-time value (default 1 when allocation > 0)
+	BucketCount int // resolved create-time value (default 1)
 }
 
 func (p CreateTicketOptionParams) Validate() error {
@@ -68,10 +68,10 @@ func (p CreateTicketOptionParams) Validate() error {
 			Detail:  "name is required",
 		}
 	}
-	if p.Allocation < 0 {
+	if p.Allocation < 1 {
 		return &InvalidInputError{
 			Pointer: "/data/attributes/allocation",
-			Detail:  "allocation must be a non-negative integer",
+			Detail:  "allocation must be a positive integer",
 		}
 	}
 	if err := ValidateBucketCount(p.Allocation, p.BucketCount); err != nil {
@@ -80,17 +80,9 @@ func (p CreateTicketOptionParams) Validate() error {
 	return nil
 }
 
-// ValidateBucketCount enforces bucket_count rules at create time.
+// ValidateBucketCount enforces bucket_count rules at create time:
+// 1 <= bucketCount <= min(allocation, MaxBucketCount).
 func ValidateBucketCount(allocation, bucketCount int) error {
-	if allocation == 0 {
-		if bucketCount != 0 {
-			return &InvalidInputError{
-				Pointer: "/data/attributes/bucket_count",
-				Detail:  "bucket_count must be 0 when allocation is 0",
-			}
-		}
-		return nil
-	}
 	if bucketCount < 1 {
 		return &InvalidInputError{
 			Pointer: "/data/attributes/bucket_count",
@@ -112,27 +104,18 @@ func ValidateBucketCount(allocation, bucketCount int) error {
 	return nil
 }
 
-// ResolveBucketCount applies the create-time default
-func ResolveBucketCount(allocation int, requested *int) int {
-	if allocation == 0 {
-		return 0
+// ResolveBucketCount applies the create-time default when bucket_count is omitted.
+func ResolveBucketCount(requested *int) int {
+	if requested != nil {
+		return *requested
 	}
-	if requested == nil {
-		return 1
-	}
-	return *requested
+	return 1
 }
 
 // SplitAllocation evenly divides total capacity across bucketCount buckets.
 func SplitAllocation(total, bucketCount int) ([]int, error) {
-	if total < 0 {
-		return nil, fmt.Errorf("total must be non-negative")
-	}
-	if total == 0 {
-		if bucketCount != 0 {
-			return nil, fmt.Errorf("bucketCount must be 0 when total is 0")
-		}
-		return nil, nil
+	if total < 1 {
+		return nil, fmt.Errorf("total must be at least 1")
 	}
 	if bucketCount < 1 {
 		return nil, fmt.Errorf("bucketCount must be at least 1")

@@ -144,7 +144,7 @@ components:
                   example: ticket option description
                 allocation:
                   type: integer
-                  minimum: 0
+                  minimum: 1
                   example: 100
                 bucket_count:
                   type: integer
@@ -152,7 +152,8 @@ components:
                   maximum: 32
                   description: >-
                     Optional number of capacity buckets for write sharding.
-                    Defaults to 1 when omitted. Must be <= allocation and <= 32.
+                    Defaults to 1 when omitted. Must satisfy
+                    1 <= bucket_count <= min(allocation, 32).
                   example: 1
     CreatePurchaseRequest:
       type: object
@@ -220,7 +221,7 @@ components:
               type: string
             allocation:
               type: integer
-              minimum: 0
+              minimum: 1
     PurchaseDocument:
       type: object
       required:

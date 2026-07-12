@@ -36,7 +36,7 @@ type CreateTicketOptionRequest struct {
 		Attributes struct {
 			Allocation int `json:"allocation"`
 
-			// BucketCount Optional number of capacity buckets for write sharding. Defaults to 1 when omitted. Must be <= allocation and <= 32.
+			// BucketCount Optional number of capacity buckets for write sharding. Defaults to 1 when omitted. Must satisfy 1 <= bucket_count <= min(allocation, 32).
 			BucketCount *int    `json:"bucket_count,omitempty"`
 			Description *string `json:"description,omitempty"`
 			Name        string  `json:"name"`

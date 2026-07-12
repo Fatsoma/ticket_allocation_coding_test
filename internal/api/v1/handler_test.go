@@ -187,6 +187,34 @@ func TestCreateTicketOptionBucketCountValidation(t *testing.T) {
 	if status != http.StatusCreated {
 		t.Fatalf("status = %d, want 201, body=%v", status, body)
 	}
+
+	status, body = doJSON(t, h, http.MethodPost, "/v1/ticket_options", map[string]any{
+		"data": map[string]any{
+			"type": "ticket_options",
+			"attributes": map[string]any{
+				"name":         "Sold out",
+				"allocation":   0,
+				"bucket_count": 1,
+			},
+		},
+	})
+	if status != http.StatusBadRequest {
+		t.Fatalf("status = %d, want 400 for allocation=0, body=%v", status, body)
+	}
+
+	status, body = doJSON(t, h, http.MethodPost, "/v1/ticket_options", map[string]any{
+		"data": map[string]any{
+			"type": "ticket_options",
+			"attributes": map[string]any{
+				"name":         "GA",
+				"allocation":   10,
+				"bucket_count": 0,
+			},
+		},
+	})
+	if status != http.StatusBadRequest {
+		t.Fatalf("status = %d, want 400 for bucket_count=0, body=%v", status, body)
+	}
 }
 
 func TestPurchaseSuccessAndOversell(t *testing.T) {

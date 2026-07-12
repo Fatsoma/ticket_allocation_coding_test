@@ -92,7 +92,7 @@ Instead of writing handlers manually, `internal/api/v1/Ticket_Allocation.swagger
 
 ### No-oversell invariant (bucketed capacity)
 
-Total capacity (`allocation`) is fixed on `ticket_options`. At create time it is split across `bucket_count` rows in `ticket_option_buckets` (default **1**, max **32**, and `bucket_count <= allocation` so no empty buckets).
+Total capacity (`allocation`) is fixed on `ticket_options`. At create time it is split across `bucket_count` rows in `ticket_option_buckets` (default **1**, max **32**, `allocation >= 1`, and `bucket_count <= allocation` so no empty buckets).
 
 Each bucket has its own `purchased` counter with:
 
@@ -123,8 +123,8 @@ This spreads write contention across buckets under concurrent load while remaini
 
 - User resources are not managed; any UUID is accepted as `user.id` (per brief)
 - `description` defaults to empty string when omitted
-- `bucket_count` defaults to `1` when omitted and `allocation > 0`; must be `0` when `allocation` is `0`
-- Allocation of `0` is allowed; purchases against it fail with insufficient allocation
+- `bucket_count` defaults to `1` when omitted; must satisfy `1 <= bucket_count <= min(allocation, 32)`
+- `allocation` must be at least `1`
 - JSON:API response schemas live in the OpenAPI spec so codegen owns serialisation shapes
 
 ### Trade-offs

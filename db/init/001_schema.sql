@@ -7,8 +7,8 @@ CREATE TABLE public.ticket_options (
     id uuid DEFAULT public.uuid_generate_v4() PRIMARY KEY,
     name character varying NOT NULL,
     description character varying NOT NULL DEFAULT '',
-    allocation integer NOT NULL CHECK (allocation >= 0),
-    bucket_count integer NOT NULL DEFAULT 1 CHECK (bucket_count >= 0 AND bucket_count <= 32),
+    allocation integer NOT NULL CHECK (allocation >= 1),
+    bucket_count integer NOT NULL DEFAULT 1 CHECK (bucket_count >= 1 AND bucket_count <= 32),
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()
 );
