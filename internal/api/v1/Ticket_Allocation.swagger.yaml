@@ -6,67 +6,65 @@ info:
 servers:
   - url: http://localhost:3000
 paths:
-  /ticket_options/{ticketOptionID}:
+  /v1/ticket_options/{ticketOptionID}:
     get:
       summary: Get ticket option
       description: Get Ticket Option by provided Ticket Option ID
       operationId: getTicketOption
+      parameters:
+        - name: ticketOptionID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         '200':
           description: Ticket option found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/TicketOptionDocument'
         '404':
           description: Ticket option not found
-    parameters:
-      - name: ticketOptionID
-        in: path
-        required: true
-        schema:
-          type: string
-  /ticket_options:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorDocument'
+  /v1/ticket_options:
     post:
       summary: Create ticket option
       description: Create Ticket Option with given attributes
       operationId: createTicketOption
       requestBody:
+        required: true
         content:
           application/vnd.api+json:
             schema:
-              type: object
-              properties:
-                data:
-                  type: object
-                  properties:
-                    attributes:
-                      type: object
-                      properties:
-                        allocation:
-                          type: integer
-                          minimum: 0
-                          example: 100
-                        description:
-                          type: string
-                          example: ticket option description
-                        name:
-                          type: string
-                          example: Test ticket option
-                    type:
-                      type: string
-                      example: ticket_options
+              $ref: '#/components/schemas/CreateTicketOptionRequest'
             examples:
               Create ticket option:
                 value:
                   data:
                     attributes:
                       allocation: 100
-                      description: ticket opion description
+                      description: ticket option description
                       name: Test ticket option
                     type: ticket_options
       responses:
         '201':
           description: Ticket option created
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/TicketOptionDocument'
         '400':
           description: Invalid request body
-  /purchases:
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorDocument'
+  /v1/purchases:
     post:
       summary: Create Purchase
       description: >-
@@ -74,51 +72,11 @@ paths:
         relationship
       operationId: createPurchase
       requestBody:
+        required: true
         content:
           application/vnd.api+json:
             schema:
-              type: object
-              properties:
-                data:
-                  type: object
-                  properties:
-                    attributes:
-                      type: object
-                      properties:
-                        quantity:
-                          type: integer
-                          minimum: 1
-                          example: 1
-                    relationships:
-                      type: object
-                      properties:
-                        ticket_option:
-                          type: object
-                          properties:
-                            data:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: '{{ticketOptionID}}'
-                                type:
-                                  type: string
-                                  example: ticket_options
-                        user:
-                          type: object
-                          properties:
-                            data:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: d6abe829-c28c-44ec-bee6-3183f2c53fef
-                                type:
-                                  type: string
-                                  example: users
-                    type:
-                      type: string
-                      example: purchases
+              $ref: '#/components/schemas/CreatePurchaseRequest'
             examples:
               Create Purchase:
                 value:
@@ -138,10 +96,224 @@ paths:
       responses:
         '201':
           description: Purchase created
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/PurchaseDocument'
         '400':
           description: >-
             Invalid purchase (e.g. quantity exceeds remaining allocation or is
             not a positive integer); no tickets are persisted
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorDocument'
         '404':
           description: Referenced ticket option not found
-tags: []
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorDocument'
+components:
+  schemas:
+    CreateTicketOptionRequest:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - type
+            - attributes
+          properties:
+            type:
+              type: string
+              example: ticket_options
+            attributes:
+              type: object
+              required:
+                - name
+                - allocation
+              properties:
+                name:
+                  type: string
+                  example: Test ticket option
+                description:
+                  type: string
+                  example: ticket option description
+                allocation:
+                  type: integer
+                  minimum: 0
+                  example: 100
+    CreatePurchaseRequest:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - type
+            - attributes
+            - relationships
+          properties:
+            type:
+              type: string
+              example: purchases
+            attributes:
+              type: object
+              required:
+                - quantity
+              properties:
+                quantity:
+                  type: integer
+                  minimum: 1
+                  example: 1
+            relationships:
+              type: object
+              required:
+                - ticket_option
+                - user
+              properties:
+                ticket_option:
+                  $ref: '#/components/schemas/TicketOptionRelationship'
+                user:
+                  $ref: '#/components/schemas/UserRelationship'
+    TicketOptionDocument:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/TicketOptionResource'
+    TicketOptionResource:
+      type: object
+      required:
+        - type
+        - id
+        - attributes
+      properties:
+        type:
+          type: string
+          example: ticket_options
+        id:
+          type: string
+          format: uuid
+        attributes:
+          type: object
+          required:
+            - name
+            - allocation
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            allocation:
+              type: integer
+              minimum: 0
+    PurchaseDocument:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/PurchaseResource'
+    PurchaseResource:
+      type: object
+      required:
+        - type
+        - id
+        - attributes
+        - relationships
+      properties:
+        type:
+          type: string
+          example: purchases
+        id:
+          type: string
+          format: uuid
+        attributes:
+          type: object
+          required:
+            - quantity
+          properties:
+            quantity:
+              type: integer
+              minimum: 1
+        relationships:
+          type: object
+          required:
+            - ticket_option
+            - user
+          properties:
+            ticket_option:
+              $ref: '#/components/schemas/TicketOptionRelationship'
+            user:
+              $ref: '#/components/schemas/UserRelationship'
+    TicketOptionRelationship:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - type
+            - id
+          properties:
+            type:
+              type: string
+              example: ticket_options
+            id:
+              type: string
+              format: uuid
+    UserRelationship:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - type
+            - id
+          properties:
+            type:
+              type: string
+              example: users
+            id:
+              type: string
+              format: uuid
+    ErrorDocument:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+    ErrorObject:
+      type: object
+      required:
+        - status
+        - title
+      properties:
+        status:
+          type: string
+          example: "400"
+        code:
+          type: string
+          example: invalid_purchase_quantity
+        title:
+          type: string
+        detail:
+          type: string
+        source:
+          type: object
+          properties:
+            pointer:
+              type: string
+              example: /data/attributes/quantity

@@ -16,3 +16,22 @@ services:
       retries: 15
     networks:
       - ticket_net
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://ticket:ticket@postgres:5432/ticket_allocation?sslmode=disable
+      PORT: "3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ticket_net
+
+networks:
+  ticket_net:
+    driver: bridge
