@@ -18,12 +18,13 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:3000/ticket_options/{{ticketOptionID}}",
+					"raw": "localhost:3000/v1/ticket_options/{{ticketOptionID}}",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
+						"v1",
 						"ticket_options",
 						"{{ticketOptionID}}"
 					]
@@ -61,12 +62,13 @@
 					"raw": "{\n    \"data\": {\n        \"type\": \"ticket_options\",\n        \"attributes\": {\n            \"name\": \"Test ticket option\",\n            \"description\": \"ticket option description\",\n            \"allocation\": 100\n        }\n    }\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/ticket_options",
+					"raw": "localhost:3000/v1/ticket_options",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
+						"v1",
 						"ticket_options"
 					]
 				},
@@ -89,12 +91,13 @@
 					"raw": "{\n    \"data\": {\n        \"type\": \"purchases\",\n        \"attributes\": {\n            \"quantity\": 1\n        },\n        \"relationships\": {\n            \"user\": {\n                \"data\": {\n                    \"type\": \"users\",\n                    \"id\": \"d6abe829-c28c-44ec-bee6-3183f2c53fef\"\n                }\n            },\n            \"ticket_option\": {\n                \"data\": {\n                    \"type\": \"ticket_options\",\n                    \"id\": \"{{ticketOptionID}}\"\n                }\n            }\n        }\n    }\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/purchases",
+					"raw": "localhost:3000/v1/purchases",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
+						"v1",
 						"purchases"
 					]
 				},

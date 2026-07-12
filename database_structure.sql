@@ -1,4 +1,8 @@
 --
+-- ORIGINAL BRIEF ARTIFACT — do not use for local setup.
+-- Superseded by db/init/001_schema.sql (bucketed capacity, CHECKs, FKs).
+-- Kept only as the schema dump that shipped with the take-home brief.
+--
 -- PostgreSQL database dump
 --
 

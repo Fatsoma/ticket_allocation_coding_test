@@ -37,6 +37,7 @@ func (h *Server) CreateTicketOption(ctx context.Context, request CreateTicketOpt
 		Name:        attrs.Name,
 		Description: description,
 		Allocation:  attrs.Allocation,
+		BucketCount: ticketing.ResolveBucketCount(attrs.Allocation, attrs.BucketCount),
 	}
 	if err := params.Validate(); err != nil {
 		var invalid *ticketing.InvalidInputError

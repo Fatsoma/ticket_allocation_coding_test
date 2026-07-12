@@ -34,7 +34,10 @@ type CreatePurchaseRequest struct {
 type CreateTicketOptionRequest struct {
 	Data struct {
 		Attributes struct {
-			Allocation  int     `json:"allocation"`
+			Allocation int `json:"allocation"`
+
+			// BucketCount Optional number of capacity buckets for write sharding. Defaults to 1 when omitted. Must be <= allocation and <= 32.
+			BucketCount *int    `json:"bucket_count,omitempty"`
 			Description *string `json:"description,omitempty"`
 			Name        string  `json:"name"`
 		} `json:"attributes"`

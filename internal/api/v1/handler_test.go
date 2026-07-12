@@ -142,6 +142,53 @@ func TestCreateTicketOptionValidation(t *testing.T) {
 	}
 }
 
+func TestCreateTicketOptionBucketCountValidation(t *testing.T) {
+	t.Parallel()
+	h := newTestServer(t)
+
+	status, body := doJSON(t, h, http.MethodPost, "/v1/ticket_options", map[string]any{
+		"data": map[string]any{
+			"type": "ticket_options",
+			"attributes": map[string]any{
+				"name":         "GA",
+				"allocation":   5,
+				"bucket_count": 6,
+			},
+		},
+	})
+	if status != http.StatusBadRequest {
+		t.Fatalf("status = %d, want 400, body=%v", status, body)
+	}
+
+	status, body = doJSON(t, h, http.MethodPost, "/v1/ticket_options", map[string]any{
+		"data": map[string]any{
+			"type": "ticket_options",
+			"attributes": map[string]any{
+				"name":         "GA",
+				"allocation":   100,
+				"bucket_count": 33,
+			},
+		},
+	})
+	if status != http.StatusBadRequest {
+		t.Fatalf("status = %d, want 400 for max, body=%v", status, body)
+	}
+
+	status, body = doJSON(t, h, http.MethodPost, "/v1/ticket_options", map[string]any{
+		"data": map[string]any{
+			"type": "ticket_options",
+			"attributes": map[string]any{
+				"name":         "GA",
+				"allocation":   100,
+				"bucket_count": 8,
+			},
+		},
+	})
+	if status != http.StatusCreated {
+		t.Fatalf("status = %d, want 201, body=%v", status, body)
+	}
+}
+
 func TestPurchaseSuccessAndOversell(t *testing.T) {
 	t.Parallel()
 	h := newTestServer(t)

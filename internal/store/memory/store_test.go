@@ -20,8 +20,9 @@ func TestCreatePurchaseRespectsAllocation(t *testing.T) {
 	ctx := context.Background()
 
 	option, err := store.CreateTicketOption(ctx, ticketing.CreateTicketOptionParams{
-		Name:       "GA",
-		Allocation: 5,
+		Name:        "GA",
+		Allocation:  5,
+		BucketCount: 1,
 	})
 	if err != nil {
 		t.Fatalf("create option: %v", err)
@@ -46,15 +47,66 @@ func TestCreatePurchaseRespectsAllocation(t *testing.T) {
 		t.Fatalf("expected ErrInsufficientAllocation, got %v", err)
 	}
 
+	if got := store.PurchasedSum(option.ID); got != 3 {
+		t.Fatalf("purchased = %d, want 3", got)
+	}
 	got, err := store.GetTicketOption(ctx, option.ID)
 	if err != nil {
 		t.Fatalf("get option: %v", err)
 	}
-	if got.Purchased != 3 {
-		t.Fatalf("purchased = %d, want 3", got.Purchased)
-	}
 	if got.Allocation != 5 {
 		t.Fatalf("allocation = %d, want 5", got.Allocation)
+	}
+}
+
+func TestMultiBucketFragmentation(t *testing.T) {
+	t.Parallel()
+
+	store := memory.NewStore()
+	ctx := context.Background()
+
+	// 3 buckets of capacity 2 each (allocation 6).
+	option, err := store.CreateTicketOption(ctx, ticketing.CreateTicketOptionParams{
+		Name:        "GA",
+		Allocation:  6,
+		BucketCount: 3,
+	})
+	if err != nil {
+		t.Fatalf("create: %v", err)
+	}
+
+	userID := uuid.New()
+	// Buy 1 from each bucket to fragment remainders to [1,1,1].
+	for i := 0; i < 3; i++ {
+		if _, err := store.CreatePurchase(ctx, ticketing.CreatePurchaseParams{
+			Quantity:       1,
+			UserID:         userID,
+			TicketOptionID: option.ID,
+		}); err != nil {
+			t.Fatalf("seed buy %d: %v", i, err)
+		}
+	}
+
+	// Buy 3 must span buckets.
+	if _, err := store.CreatePurchase(ctx, ticketing.CreatePurchaseParams{
+		Quantity:       3,
+		UserID:         userID,
+		TicketOptionID: option.ID,
+	}); err != nil {
+		t.Fatalf("multi-bucket buy: %v", err)
+	}
+
+	if got := store.PurchasedSum(option.ID); got != 6 {
+		t.Fatalf("purchased = %d, want 6", got)
+	}
+
+	_, err = store.CreatePurchase(ctx, ticketing.CreatePurchaseParams{
+		Quantity:       1,
+		UserID:         userID,
+		TicketOptionID: option.ID,
+	})
+	if !errors.Is(err, ticketing.ErrInsufficientAllocation) {
+		t.Fatalf("expected insufficient, got %v", err)
 	}
 }
 
@@ -69,8 +121,9 @@ func TestConcurrentPurchasesDoNotOversell(t *testing.T) {
 	const qty = 3
 
 	option, err := store.CreateTicketOption(ctx, ticketing.CreateTicketOptionParams{
-		Name:       "GA",
-		Allocation: allocation,
+		Name:        "GA",
+		Allocation:  allocation,
+		BucketCount: 32,
 	})
 	if err != nil {
 		t.Fatalf("create option: %v", err)
