@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ticket
+      POSTGRES_PASSWORD: ticket
+      POSTGRES_DB: ticket_allocation
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ticket -d ticket_allocation"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+    networks:
+      - ticket_net
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://ticket:ticket@postgres:5432/ticket_allocation?sslmode=disable
+      PORT: "3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ticket_net
+
+networks:
+  ticket_net:
+    driver: bridge

@@ -1,0 +1,12 @@
+.dockerignore
+.git
+.idea
+.vscode
+*.md
+*.test
+bin/
+dist/
+vendor/
+.DS_Store
+Ticket_Allocation.postman_collection.json
+database_structure.sql
